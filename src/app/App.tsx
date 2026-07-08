@@ -5,6 +5,7 @@ import KakaoCallbackPage from "../pages/KakaoCallbackPage.tsx";
 import GoogleCallbackPage from "../pages/GoogleCallbackPage.tsx";
 import NaverCallbackPage from "../pages/NaverCallbackPage.tsx";
 import MainPage from "../pages/MainPage.tsx";
+import BloodCenterMapPage from "../pages/BloodCenterMapPage.tsx";
 
 
 /**
@@ -27,6 +28,7 @@ function App() {
             <Route path="/oauth/google" element={<GoogleCallbackPage/>}/>
             <Route path="/oauth/naver" element={<NaverCallbackPage/>}/>
             <Route path="/" element={<Navigate to="/login" replace/>}/>
+            <Route path="/blood-centers" element={<BloodCenterMapPage />}/>
         </Routes>
     );
 }

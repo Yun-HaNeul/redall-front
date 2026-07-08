@@ -11,13 +11,14 @@ import {
   Alert,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { login } from "../api/auth";
-import type { LoginRequest, OAuthProvider } from "../types/auth";
+import { login as loginApi } from "../api/auth";
+import type { LoginRequest  } from "../types/auth";
 import SocialLoginButtons from "../components/SocialLoginButtons";
-import {saveTokens} from "../utils/auth.ts";
+import {useAuth} from "../context/AuthContext";
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -36,15 +37,15 @@ function LoginPage() {
     setErrorMsg("");
     setLoading(true);
     try {
-      const res = await login(values);
-      saveTokens(res.data.accessToken, res.data.refreshToken);
+      const res = await loginApi(values);
 
       if (res.data.mustChangePassword) {
         alert("임시 비밀번호로 로그인했습니다. 비밀번호를 변경해 주세요.");
       }
 
-      alert("로그인 성공! (다음 단계에서 메인 화면으로 연결됩니다)");
-      void navigate;
+      // Context 로그인 (토큰 저장 + 사용자 정보 로드)
+      await login(res.data.accessToken, res.data.refreshToken);
+      navigate("/main");
     } catch (err) {
       const error = err as { response?: { data?: { message?: string } } };
       setErrorMsg(error.response?.data?.message ?? "로그인에 실패했습니다.");

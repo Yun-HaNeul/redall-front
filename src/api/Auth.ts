@@ -42,3 +42,8 @@ export const naverLogin = (code: string, state: string) => {
 export const resetPassword = (email: string) => {
     return api.post("/api/auth/password/reset", {email});
 };
+
+// 내 정보 조회 (JWT 필요, axios 인터셉터가 토큰 자동 첨부)
+export const getMe = () => {
+    return api.get<MeResponse>("/api/auth/me");
+}

@@ -2,12 +2,13 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import type { LoginResponse } from "../types/auth";
 import type { AxiosResponse } from "axios";
-import {saveTokens} from "../utils/auth.ts";
+import {useAuth} from "../context/AuthContext";
 
 /**
  * 소셜 로그인 콜백 처리 공통 훅.
  * provider별로 다른 것은 "code로 로그인하는 함수"뿐이므로,
  * 그 함수만 받아서 공통 흐름(code 추출 → 호출 → JWT 저장)을 처리한다.
+ * code 추출 -> 백엔드 호출 -> Context 로그인 -> 메인 이동
  *
  * @param loginFn code(및 state)를 받아 백엔드에 로그인 요청하는 함수
  * @param needState 네이버처럼 state가 필요한지 여부
@@ -17,6 +18,7 @@ export function useOAuthCallback(
   needState = false
 ) {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [searchParams] = useSearchParams();
   const [errorMsg, setErrorMsg] = useState("");
   const calledRef = useRef(false);
@@ -39,8 +41,8 @@ export function useOAuthCallback(
     calledRef.current = true;
 
     loginFn(code, state)
-      .then((res) => {
-        saveTokens(res.data.accessToken, res.data.refreshToken);
+      .then(async (res) => {
+        await login(res.data.accessToken, res.data.refreshToken);
         navigate("/main", { replace: true });
       })
       .catch((err) => {
@@ -49,7 +51,7 @@ export function useOAuthCallback(
           error.response?.data?.message ?? "소셜 로그인에 실패했습니다."
         );
       });
-  }, [searchParams, navigate, loginFn, needState]);
+  }, [searchParams]);
 
   return { errorMsg };
 }
