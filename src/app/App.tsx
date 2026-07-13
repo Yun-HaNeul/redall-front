@@ -6,6 +6,8 @@ import GoogleCallbackPage from "../pages/GoogleCallbackPage.tsx";
 import NaverCallbackPage from "../pages/NaverCallbackPage.tsx";
 import MainPage from "../pages/MainPage.tsx";
 import BloodCenterMapPage from "../pages/BloodCenterMapPage.tsx";
+import StatisticsPage from "../pages/StatisticsPage.tsx";
+import MainLayout from "../layouts/MainLayout.tsx";
 
 
 /**
@@ -21,14 +23,21 @@ import BloodCenterMapPage from "../pages/BloodCenterMapPage.tsx";
 function App() {
     return (
         <Routes>
+            {/* 헤더 없는 페이지 (로그인/회원가입/콜백) */}
             <Route path="/login" element={<LoginPage/>}/>
             <Route path="/signup" element={<SignupPage/>}/>
-            <Route path="/main" element={<MainPage/>}/>
             <Route path="/oauth/kakao" element={<KakaoCallbackPage/>}/>
             <Route path="/oauth/google" element={<GoogleCallbackPage/>}/>
             <Route path="/oauth/naver" element={<NaverCallbackPage/>}/>
-            <Route path="/" element={<Navigate to="/login" replace/>}/>
-            <Route path="/blood-centers" element={<BloodCenterMapPage />}/>
+
+            {/* 헤더 있는 페이지 (레이아웃으로 감쌈) */}
+            <Route element={<MainLayout/>}>
+                <Route path="/main" element={<MainPage/>}/>
+                <Route path="/blood-centers" element={<BloodCenterMapPage/>}/>
+                <Route path="/statistics" element={<StatisticsPage/>}/>
+            </Route>
+
+             <Route path="/" element={<Navigate to="/login" replace/>}/>
         </Routes>
     );
 }

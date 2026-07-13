@@ -36,11 +36,6 @@ function MainPage() {
 
   return (
     <Container size="md" my={40}>
-      <Group justify="space-between" mb="xl">
-        <Title order={2}>redall</Title>
-        <Button variant="light" color="red" onClick={handleLogout}>로그아웃</Button>
-      </Group>
-
       <Paper withBorder p="lg" radius="md" mb="xl">
         <Stack gap="xs">
           <Text size="lg" fw={500}>{user?.name}님, 환영합니다 👋</Text>
@@ -61,9 +56,9 @@ function MainPage() {
           <Text fw={500} mb={4}>헌혈의 집 찾기</Text>
           <Text size="sm" c="dimmed">지도에서 찾기</Text>
         </Card>
-        <Card withBorder padding="lg" radius="md">
+        <Card withBorder padding="lg" radius="md" style={{ cursor: "pointer" }} onClick={() => navigate("/statistics")}>
           <Text fw={500} mb={4}>헌혈 통계</Text>
-          <Text size="sm" c="dimmed">준비 중입니다</Text>
+          <Text size="sm" c="dimmed">전국 헌혈 현황</Text>
         </Card>
       </SimpleGrid>
     </Container>
