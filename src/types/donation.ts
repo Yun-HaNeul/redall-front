@@ -17,6 +17,8 @@ export interface Donation {
     bloodCenterId: number | null;
     placeName: string;
     memo: string | null;
+    sequence: number;       //  전체 회차
+    typeSequence: number;   //  종류별 회차
 }
 
 // 등록/수정 요청

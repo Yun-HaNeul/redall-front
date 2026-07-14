@@ -2,17 +2,20 @@ import {useEffect, useState} from "react";
 import type {BloodCenter} from "../types/bloodCenter.ts";
 import {getBloodCenter} from "../api/BloodCenter.ts";
 import {useForm} from "@mantine/form";
-import type {DonationRequest, DonationType} from "../types/donation.ts";
+import type {Donation, DonationRequest, DonationType} from "../types/donation.ts";
 import {Autocomplete, Button, Modal, Select, Stack, Switch, Textarea, TextInput} from "@mantine/core";
+import {updateDonation} from "../api/donation.ts";
 
 /**
- * 헌혈 기록 등록 폼 (모달)
+ * 헌혈 기록 등록/수정 폼 (모달)
+ * editing이 있으면 수정 모드
  */
 
 interface Props {
     opened: boolean;
     onClose: () => void;
     onSuccess: () => void;
+    editing?: Donation | null;      //   수정할 기록 (없으면 등록 모드)
 }
 
 const TYPE_OPTIONS = [
@@ -22,14 +25,16 @@ const TYPE_OPTIONS = [
     {value: "PLATELET_PLASMA", label: "혈소판혈장"},
 ];
 
-function DonationForm({ opened, onClose, onSuccess }: Props) {
+function DonationForm({opened, onClose, onSuccess, editing}: Props) {
     const [centers, setCenters] = useState<BloodCenter[]>([]);
     const [useDirectInput, setUseDirectInput] = useState(false);
     const [loading, setLoading] = useState(false);
 
+    const isEdit = !!editing;
+
     // 헌혈의 집 목록 가져오기
     useEffect(() => {
-        if(opened) {
+        if (opened) {
             getBloodCenter()
                 .then((res) => setCenters(res.data))
                 .catch(() => setCenters([]));
@@ -49,6 +54,23 @@ function DonationForm({ opened, onClose, onSuccess }: Props) {
         },
     });
 
+    useEffect(() => {
+        if (editing && opened) {
+            const isDirect = editing.bloodCenterId === null;
+            setUseDirectInput(isDirect);
+            form.setValues({
+                donationDate: editing.donationDate,
+                donationType: editing.donationType,
+                centerName: isDirect ? "" : editing.placeName,
+                placeName: isDirect ? editing.placeName : "",
+                memo: editing.memo ?? "",
+            });
+        } else if (!editing && opened) {
+            form.reset();
+            setUseDirectInput(false);
+        }
+    }, [editing, opened]);
+
     const handleSubmit = async (values: typeof form.values) => {
         setLoading(true);
         try {
@@ -59,23 +81,29 @@ function DonationForm({ opened, onClose, onSuccess }: Props) {
                 donationDate: values.donationDate,
                 donationType: values.donationType,
                 bloodCenterId: useDirectInput ? null : selected?.id ?? null,
+                placeName: useDirectInput ? values.placeName : null,
                 memo: values.memo || null,
             };
 
-            await createDonation(request);
+            if (isEdit && editing) {
+                await updateDonation(editing.id, request)
+            } else {
+                await createDonation(request);
+            }
+
             form.reset();
             onSuccess();
             onClose();
-        }catch (err){
-            const error = err as { response?: {data?: { message?: string } } };
+        } catch (err) {
+            const error = err as { response?: { data?: { message?: string } } };
             alert(error.response?.data?.message ?? "등록에 실패했습니다.");
-        }finally {
+        } finally {
             setLoading(false);
         }
     };
 
     return (
-        <Modal opened={opened} onClose={onClose} title="헌혈 기록 등록" centered>
+        <Modal opened={opened} onClose={onClose} title={isEdit ? "헌혈 기록 수정" : "헌혈 기록 등록"} centered>
             <form onSubmit={form.onSubmit(handleSubmit)}>
                 <Stack>
                     <TextInput
@@ -89,21 +117,21 @@ function DonationForm({ opened, onClose, onSuccess }: Props) {
                         data={TYPE_OPTIONS}
                         {...form.getInputProps("donationType")}
                     />
-                    
-                    <Switch 
+
+                    <Switch
                         label="장소 집적 입력 (헌혈버스 등)"
                         checked={useDirectInput}
                         onChange={(e) => setUseDirectInput(e.currentTarget.checked)}
                     />
 
                     {useDirectInput ? (
-                        <TextInput 
+                        <TextInput
                             label="장소"
                             placeholder="예: oo대학교 헌혈버스"
                             {...form.getInputProps("placeNames")}
                         />
                     ) : (
-                        <Autocomplete 
+                        <Autocomplete
                             label="헌혈의 집"
                             placeholder="검색해서 선택"
                             data={centers.map((c) => c.name)}
@@ -111,15 +139,15 @@ function DonationForm({ opened, onClose, onSuccess }: Props) {
                             {...form.getInputProps("centerName")}
                         />
                     )}
-                    
-                    <Textarea 
+
+                    <Textarea
                         label="메모 (선택)"
                         placeholder="기념품, 컨디션 등"
                         {...form.getInputProps("memo")}
                     />
-                    
+
                     <Button type="submit" loading={loading} fullWidth>
-                        등록
+                        {isEdit ? "수정" : "등록"}
                     </Button>
                 </Stack>
             </form>

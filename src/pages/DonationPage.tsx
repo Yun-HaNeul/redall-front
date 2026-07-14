@@ -20,20 +20,21 @@ import {
 import AvailabilityCard from "../components/AvailabilityCard.tsx";
 import DonationForm from "../components/DonationForm.tsx";
 
-function DonationPage(){
+function DonationPage() {
     const navigate = useNavigate();
-    const { isAuthenticated, loading: authLoading } = useAuth();
+    const {isAuthenticated, loading: authLoading} = useAuth();
 
     const [donations, setDonations] = useState<Donation[]>([]);
     const [availability, setAvailability] = useState<DonationAvailability[]>([]);
     const [summary, setSummary] = useState<DonationSummary | null>(null);
     const [loading, setLoading] = useState(true);
     const [formOpened, setFormOpened] = useState(false);
+    const [editing, setEditing] = useState<Donation | null>(null);
 
     // 로그인 체크
     useEffect(() => {
         if (!authLoading && !isAuthenticated) {
-            navigate("/login", { replace: true });
+            navigate("/login", {replace: true});
         }
     }, [authLoading, isAuthenticated, navigate]);
 
@@ -49,7 +50,7 @@ function DonationPage(){
     };
 
     useEffect(() => {
-        if (isAuthenticated){
+        if (isAuthenticated) {
             loadData()
         }
     }, [isAuthenticated]);
@@ -59,7 +60,7 @@ function DonationPage(){
         try {
             await deleteDonation(id);
             loadData();
-        }catch {
+        } catch {
             alaert("삭제에 실패했습니다.");
         }
     };
@@ -67,7 +68,7 @@ function DonationPage(){
     if (loading || authLoading) {
         return (
             <Center h="60vh">
-                <Loader />
+                <Loader/>
             </Center>
         )
     }
@@ -81,8 +82,11 @@ function DonationPage(){
                         헌혈 기록과 다음 헌혈 가능일을 확인하세요
                     </Text>
                 </div>
-                <Button variant="light" color="red" onClick={() => setFormOpened(true)}>
-                     ➕ 기록 추가
+                <Button variant="light" color="red" onClick={() => {
+                    setEditing(null);
+                    setFormOpened(true);
+                }}>
+                    ➕ 기록 추가
                 </Button>
             </Group>
 
@@ -99,7 +103,7 @@ function DonationPage(){
                             </Text>
                         </div>
                         {summary.lastDonationDate && (
-                            <div style={{ marginLeft: 32 }}>
+                            <div style={{marginLeft: 32}}>
                                 <Text size="xs" c="dimmed">
                                     마지막 헌혈
                                 </Text>
@@ -117,9 +121,9 @@ function DonationPage(){
             <Text fw={500} mb="sm">
                 다음 헌혈 가능일
             </Text>
-            <SimpleGrid cols={{ base:1, sm: 2 }} mb="xl" >
+            <SimpleGrid cols={{base: 1, sm: 2}} mb="xl">
                 {availability.map((a) => (
-                    <AvailabilityCard key={a.type} data={a} />
+                    <AvailabilityCard key={a.type} data={a}/>
                 ))}
             </SimpleGrid>
 
@@ -150,9 +154,12 @@ function DonationPage(){
                             <Group justify="space-between">
                                 <div>
                                     <Group gap="xs">
+                                        <Badge color="gray" variant="light" size="sm">
+                                            {d.sequence}회차
+                                        </Badge>
                                         <Text fw={500}>{d.donationDate}</Text>
                                         <Badge color="red" variant="light" size="md">
-                                            {d.donationTypeName}
+                                            {d.donationTypeName} {d.typeSequence}회
                                         </Badge>
                                     </Group>
                                     <Text size="sm" c="dimmed">
@@ -164,21 +171,41 @@ function DonationPage(){
                                         </Text>
                                     )}
                                 </div>
-                                <ActionIcon
-                                    variant="subtle"
-                                    color="grey"
-                                    onClick={() => handleDelete(d.id)}
-                                >
-                                    X
-                                </ActionIcon>
+                                <Group>
+                                    <ActionIcon
+                                        variant="subtle"
+                                        color="blue"
+                                        onClick={() => {
+                                            setEditing(d);
+                                            setFormOpened(true);
+                                        }}
+                                    >
+                                        ✎
+                                    </ActionIcon>
+                                    <ActionIcon
+                                        variant="subtle"
+                                        color="grey"
+                                        onClick={() => handleDelete(d.id)}
+                                    >
+                                        ✕
+                                    </ActionIcon>
+                                </Group>
+
                             </Group>
                         </Card>
                     ))}
                 </Stack>
             )}
 
-            <DonationForm opened={formOpened} onClose={() => setFormOpened(false)} onSuccess={loadData} />
+            <DonationForm opened={formOpened} oonClose={() => {
+                setFormOpened(false);
+                setEditing(null);
+            }}
+                          onSuccess={loadData}
+                          editing={editing}
+            />
         </Container>
     )
 }
+
 export default DonationPage;
