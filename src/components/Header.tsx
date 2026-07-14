@@ -62,6 +62,14 @@ function Header() {
                         >
                             헌혈 통계
                         </Button>
+                        <Button
+                            variant={isActive("/donations") ? "light" : "subtle"}
+                            color="red"
+                            size="sm"
+                            onClick={() => navigate("/donations")}
+                        >
+                            나의 헌혈
+                        </Button>
                     </Group>
 
                     {/* 로그인 상태 */}

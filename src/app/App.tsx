@@ -8,6 +8,7 @@ import MainPage from "../pages/MainPage.tsx";
 import BloodCenterMapPage from "../pages/BloodCenterMapPage.tsx";
 import StatisticsPage from "../pages/StatisticsPage.tsx";
 import MainLayout from "../layouts/MainLayout.tsx";
+import DonationPage from "../pages/DonationPage.tsx";
 
 
 /**
@@ -35,6 +36,7 @@ function App() {
                 <Route path="/main" element={<MainPage/>}/>
                 <Route path="/blood-centers" element={<BloodCenterMapPage/>}/>
                 <Route path="/statistics" element={<StatisticsPage/>}/>
+                <Route path="/donations" element={<DonationPage />}/>
             </Route>
 
              <Route path="/" element={<Navigate to="/login" replace/>}/>

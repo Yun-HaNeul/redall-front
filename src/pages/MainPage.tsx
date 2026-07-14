@@ -45,9 +45,8 @@ function MainPage() {
       </Paper>
 
       <SimpleGrid cols={{ base: 1, sm: 3 }}>
-        <Card withBorder padding="lg" radius="md">
-          <Text fw={500} mb={4}>헌혈 내역</Text>
-          <Text size="sm" c="dimmed">준비 중입니다</Text>
+        <Card withBorder padding="lg" radius="md" style={{ cursor: "pointer" }} onClick={() => navigate("/donations")}>
+          <Text fw={500} mb={4}>나의 헌혈 내역</Text>
         </Card>
         <Card withBorder padding="lg" radius="md"
               style={{cursor: "pointer"}}
