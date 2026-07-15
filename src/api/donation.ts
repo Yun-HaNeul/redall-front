@@ -1,5 +1,11 @@
 import api from "./axios.ts";
-import type {Donation, DonationAvailability, DonationRequest, DonationSummary} from "../types/donation.ts";
+import type {
+    Donation,
+    DonationAvailability,
+    DonationInsight,
+    DonationRequest,
+    DonationSummary
+} from "../types/donation.ts";
 
 // 내 헌혈 기록 목록
 export const getMyDonations = () => {
@@ -29,4 +35,9 @@ export const getAvailability = () => {
 // 요약
 export const getDonationSummary = () => {
     return api.get<DonationSummary>("/api/donations/summary")
+}
+
+// AI 인사이트 (응답 느릴 수 있어서 로딩 처리 필요)
+export const getDonationInsight = () => {
+    return api.get<DonationInsight>("/api/donations/insight");
 }

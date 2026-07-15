@@ -19,6 +19,7 @@ import {
 } from "@mantine/core";
 import AvailabilityCard from "../components/AvailabilityCard.tsx";
 import DonationForm from "../components/DonationForm.tsx";
+import InsightCard from "../components/InsightCard.tsx";
 
 function DonationPage() {
     const navigate = useNavigate();
@@ -115,6 +116,13 @@ function DonationPage() {
                         )}
                     </Group>
                 </Paper>
+            )}
+
+            {/* AI 인사이트 */}
+            {donations.length > 0 && (
+                <div style={{marginBottom: 24}}>
+                    <InsightCard/>
+                </div>
             )}
 
             {/* 가능일 (핵심) */}

@@ -49,3 +49,8 @@ export interface DonationSummary {
     lastDonationDate: string | null;
     lastDonationType: string | null;
 }
+
+// AI 인사이트
+export interface DonationInsight {
+    insight: string;
+}
