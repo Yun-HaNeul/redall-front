@@ -61,7 +61,7 @@ function DonationPage() {
             await deleteDonation(id);
             loadData();
         } catch {
-            alaert("삭제에 실패했습니다.");
+            alert("삭제에 실패했습니다.");
         }
     };
 
@@ -197,7 +197,7 @@ function DonationPage() {
                 </Stack>
             )}
 
-            <DonationForm opened={formOpened} oonClose={() => {
+            <DonationForm opened={formOpened} onClose={() => {
                 setFormOpened(false);
                 setEditing(null);
             }}

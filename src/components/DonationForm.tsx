@@ -4,7 +4,7 @@ import {getBloodCenter} from "../api/BloodCenter.ts";
 import {useForm} from "@mantine/form";
 import type {Donation, DonationRequest, DonationType} from "../types/donation.ts";
 import {Autocomplete, Button, Modal, Select, Stack, Switch, Textarea, TextInput} from "@mantine/core";
-import {updateDonation} from "../api/donation.ts";
+import {createDonation, updateDonation} from "../api/donation.ts";
 
 /**
  * 헌혈 기록 등록/수정 폼 (모달)
@@ -75,7 +75,7 @@ function DonationForm({opened, onClose, onSuccess, editing}: Props) {
         setLoading(true);
         try {
             // 헌혈의 집 선택 시 id 찾기
-            const selected = center.find((c) => c.name === values.centerName);
+            const selected = centers.find((c) => c.name === values.centerName);
 
             const request: DonationRequest = {
                 donationDate: values.donationDate,
@@ -128,7 +128,7 @@ function DonationForm({opened, onClose, onSuccess, editing}: Props) {
                         <TextInput
                             label="장소"
                             placeholder="예: oo대학교 헌혈버스"
-                            {...form.getInputProps("placeNames")}
+                            {...form.getInputProps("placeName")}
                         />
                     ) : (
                         <Autocomplete

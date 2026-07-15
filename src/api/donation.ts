@@ -13,7 +13,7 @@ export const createDonation = (data: DonationRequest) => {
 
 // 수정
 export const updateDonation = (id: number, data: DonationRequest) => {
-    return api.put<Donation>(`/api/donation/${id}`, data);
+    return api.put<Donation>(`/api/donations/${id}`, data);
 };
 
 // 삭제
