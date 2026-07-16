@@ -22,7 +22,6 @@ import DonationForm from "../components/DonationForm.tsx";
 import InsightCard from "../components/InsightCard.tsx";
 
 function DonationPage() {
-    const navigate = useNavigate();
     const {isAuthenticated, loading: authLoading} = useAuth();
 
     const [donations, setDonations] = useState<Donation[]>([]);
@@ -31,13 +30,6 @@ function DonationPage() {
     const [loading, setLoading] = useState(true);
     const [formOpened, setFormOpened] = useState(false);
     const [editing, setEditing] = useState<Donation | null>(null);
-
-    // 로그인 체크
-    useEffect(() => {
-        if (!authLoading && !isAuthenticated) {
-            navigate("/login", {replace: true});
-        }
-    }, [authLoading, isAuthenticated, navigate]);
 
     const loadData = () => {
         Promise.all([getMyDonations(), getAvailability(), getDonationSummary()])

@@ -9,6 +9,7 @@ import BloodCenterMapPage from "../pages/BloodCenterMapPage.tsx";
 import StatisticsPage from "../pages/StatisticsPage.tsx";
 import MainLayout from "../layouts/MainLayout.tsx";
 import DonationPage from "../pages/DonationPage.tsx";
+import ProtectedRoute from "../components/ProtectedRoute.tsx";
 
 
 /**
@@ -33,13 +34,18 @@ function App() {
 
             {/* 헤더 있는 페이지 (레이아웃으로 감쌈) */}
             <Route element={<MainLayout/>}>
-                <Route path="/main" element={<MainPage/>}/>
+                {/* 공개 페이지 (로그인 없이 접근 가능) */}
                 <Route path="/blood-centers" element={<BloodCenterMapPage/>}/>
                 <Route path="/statistics" element={<StatisticsPage/>}/>
-                <Route path="/donations" element={<DonationPage />}/>
+
+                {/* 보호 페이지 (로그인 필수) */}
+                <Route element={<ProtectedRoute/>}>
+                    <Route path="/main" element={<MainPage/>}/>
+                    <Route path="/donations" element={<DonationPage/>}/>
+                </Route>
             </Route>
 
-             <Route path="/" element={<Navigate to="/login" replace/>}/>
+            <Route path="/" element={<Navigate to="/login" replace/>}/>
         </Routes>
     );
 }

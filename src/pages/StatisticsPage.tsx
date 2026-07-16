@@ -22,6 +22,7 @@ import type {
 import YearlyTrendChart from "../components/YearlyTrendChart.tsx";
 import RegionRankChart from "../components/RegionRankChart.tsx";
 import KoreaChoroplethMap from "../components/KoreaChoroplethMap.tsx";
+import BloodTypeSection from "../components/BloodTypeSection.tsx";
 
 /**
  * 헌혈 통계 대시보드.
@@ -166,6 +167,11 @@ function StatisticsPage() {
                 </Text>
                 <RegionRankChart data={regions}/>
             </Card>
+
+            {/* 혈액형 분포 */}
+            <div style={{marginTop: 24}}>
+                <BloodTypeSection/>
+            </div>
         </Container>
     );
 }
